@@ -15,19 +15,7 @@ ARDroneDriver::ARDroneDriver()
     inited = false;
     last_frame_id = -1;
     last_navdata_id = -1;
-    cmd_vel_sub = node_handle.subscribe("cmd_vel", 1, &cmdVelCallback);
-    takeoff_sub = node_handle.subscribe("ardrone/takeoff", 1, &takeoffCallback);
-    reset_sub = node_handle.subscribe("ardrone/reset", 1, &resetCallback);
-    land_sub = node_handle.subscribe("ardrone/land", 1, &landCallback);
-    image_pub = image_transport.advertiseCamera("ardrone/image_raw", 10);
-    hori_pub = image_transport.advertiseCamera("ardrone/front/image_raw", 10);
-    vert_pub = image_transport.advertiseCamera("ardrone/bottom/image_raw", 10);
-    toggleCam_service = node_handle.advertiseService("ardrone/togglecam", toggleCamCallback);
-    setCamChannel_service = node_handle.advertiseService("ardrone/setcamchannel",setCamChannelCallback );
-    setLedAnimation_service = node_handle.advertiseService("ardrone/setledanimation", setLedAnimationCallback);
-    flatTrim_service = node_handle.advertiseService("ardrone/flattrim", flatTrimCallback);
-    setFlightAnimation_service = node_handle.advertiseService("ardrone/setflightanimation", setFlightAnimationCallback);
-    setRecord_service = node_handle.advertiseService("ardrone/setrecord", setRecordCallback );
+    
 
     /*
         To be honest, I am not sure why advertising a service using class members should be this complicated!
@@ -144,6 +132,21 @@ void ARDroneDriver::run()
                 ROS_INFO("    Realtime Navdata Publish: %s", realtime_navdata ? "On" : "Off");
                 ROS_INFO("    Realtime Video Publish: %s", realtime_video ? "On" : "Off");
                 ROS_INFO("    Drone Navdata Send Speed: %s", ardrone_application_default_config.navdata_demo==0 ? "200Hz (navdata_demo=0)" : "15Hz (navdata_demo=1)");
+                
+                ROS_INFO("     Setting up topics and services")
+                cmd_vel_sub = node_handle.subscribe(ardrone_control_config.ardrone_name + "/cmd_vel", 1, &cmdVelCallback);
+    		takeoff_sub = node_handle.subscribe(ardrone_control_config.ardrone_name + "/takeoff", 1, &takeoffCallback);
+    		reset_sub = node_handle.subscribe(ardrone_control_config.ardrone_name + "/reset", 1, &resetCallback);
+    		land_sub = node_handle.subscribe(ardrone_control_config.ardrone_name + "/land", 1, &landCallback);
+    		image_pub = image_transport.advertiseCamera(ardrone_control_config.ardrone_name + "/image_raw", 10);
+    		hori_pub = image_transport.advertiseCamera(ardrone_control_config.ardrone_name + "/front/image_raw", 10);
+    		vert_pub = image_transport.advertiseCamera(ardrone_control_config.ardrone_name + "/bottom/image_raw", 10);
+    		toggleCam_service = node_handle.advertiseService(ardrone_control_config.ardrone_name + "/togglecam", toggleCamCallback);
+    		setCamChannel_service = node_handle.advertiseService(ardrone_control_config.ardrone_name + "/setcamchannel",setCamChannelCallback );
+		 setLedAnimation_service = node_handle.advertiseService(ardrone_control_config.ardrone_name + "/setledanimation", setLedAnimationCallback);
+    		flatTrim_service = node_handle.advertiseService(ardrone_control_config.ardrone_name + "/flattrim", flatTrimCallback);
+    		setFlightAnimation_service = node_handle.advertiseService(ardrone_control_config.ardrone_name + "/setflightanimation", setFlightAnimationCallback);
+    		setRecord_service = node_handle.advertiseService(ardrone_control_config.ardrone_name + "/setrecord", setRecordCallback );
                 // TODO: Enabled Navdata Demo
                 vp_os_mutex_unlock(&navdata_lock);
                 if (ardrone_control_config.num_version_soft[0] == '0')
