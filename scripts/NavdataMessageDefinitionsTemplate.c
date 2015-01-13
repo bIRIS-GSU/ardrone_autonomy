@@ -39,9 +39,20 @@
 		ros::param::param("~enable_legacy_navdata", enabled_legacy_navdata, true);
 		if(enabled_legacy_navdata)
 		{
-			navdata_pub = node_handle.advertise<ardrone_autonomy::Navdata>("ardrone/navdata", 25);
-			imu_pub = node_handle.advertise<sensor_msgs::Imu>("ardrone/imu", 25);
-			mag_pub = node_handle.advertise<geometry_msgs::Vector3Stamped>("ardrone/mag", 25);
+			char nav_name[25];
+			strcpy(nav_name, ardrone_control_config.ardrone_name);
+			strcat(nav_name, "/navdata");
+			navdata_pub = node_handle.advertise<ardrone_autonomy::Navdata>(nav_name, 25);
+
+			char imu_name[25];
+			strcpy(imu_name, ardrone_control_config.ardrone_name);
+			strcat(imu_name, "/imu");
+			imu_pub = node_handle.advertise<sensor_msgs::Imu>(imu_name, 25);
+
+			char mag_name[25];
+			strcpy(mag_name, ardrone_control_config.ardrone_name);
+			strcat(mag_name, "/mag");
+			mag_pub = node_handle.advertise<geometry_msgs::Vector3Stamped>(mag_name, 25);
 		}
 
 		//-------------------------
@@ -50,7 +61,10 @@
 		ros::param::param("~enable_${item['struct_name']}", enabled_${item['struct_name']}, false);
 		if(enabled_${item['struct_name']})
 		{
-			pub_${item['struct_name']} = node_handle.advertise<ardrone_autonomy::${item['struct_name']}>("ardrone/${item['struct_name']}", NAVDATA_QUEUE_SIZE);
+			char ${item['struct_name']}_name[35];
+			strcpy(${item['struct_name']}_name, ardrone_control_config.ardrone_name);
+			strcat(${item['struct_name']}_name, "/${item['struct_name']}");
+			pub_${item['struct_name']} = node_handle.advertise<ardrone_autonomy::${item['struct_name']}>(${item['struct_name']}_name, NAVDATA_QUEUE_SIZE);
 		}
 
 		//-------------------------
